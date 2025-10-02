@@ -7,6 +7,10 @@ if (basename($_SERVER['PHP_SELF']) == 'header.php') {
 // Fetch current user data for display in the profile dropdown and sidebar
 $user = get_current_user();
 $is_admin = is_admin();
+// Defensive defaults for display-only usage
+$displayUsername = htmlspecialchars($user['username'] ?? 'User');
+$displayRole = htmlspecialchars(isset($user['role']) ? ucfirst($user['role']) : 'User');
+$displayWallet = is_numeric($user['wallet_balance'] ?? null) ? number_format($user['wallet_balance'], 2) : number_format(0, 2);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -107,7 +111,7 @@ $is_admin = is_admin();
 
             <div class="mt-8 pt-4 border-t border-gray-700">
                 <p class="text-xs text-gray-400">Wallet Balance:</p>
-                <p class="text-xl font-bold text-green-400">₹<?php echo number_format($user['wallet_balance'], 2); ?></p>
+                <p class="text-xl font-bold text-green-400">₹<?php echo $displayWallet; ?></p>
             </div>
         </aside>
 
@@ -138,8 +142,8 @@ $is_admin = is_admin();
                         <!-- Dropdown Content (Simulated) -->
                         <div class="absolute right-0 mt-3 w-48 bg-white border border-gray-200 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                             <div class="p-4 border-b">
-                                <p class="font-semibold"><?php echo htmlspecialchars($user['username']); ?></p>
-                                <p class="text-xs text-gray-500">Role: <?php echo ucfirst(htmlspecialchars($user['role'])); ?></p>
+                                <p class="font-semibold"><?php echo $displayUsername; ?></p>
+                                <p class="text-xs text-gray-500">Role: <?php echo $displayRole; ?></p>
                             </div>
                             <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 <i data-lucide="settings" class="w-4 h-4 mr-2"></i> Account settings

@@ -8,13 +8,17 @@ $transactions = [];
 $error = '';
 
 // --- Database Fetch Logic ---
-try {
-    // Select transaction history for the current user, ordered by date descending
-    $stmt = $pdo->prepare("SELECT id, type, amount, date FROM transactions WHERE user_id = ? ORDER BY date DESC");
-    $stmt->execute([$user_id]);
-    $transactions = $stmt->fetchAll();
-} catch (PDOException $e) {
-    $error = "Could not load transaction history: " . $e->getMessage();
+if (!$pdo) {
+    $error = "Database connection is not configured.";
+} else {
+    try {
+        // Select transaction history for the current user, ordered by date descending
+        $stmt = $pdo->prepare("SELECT id, type, amount, date FROM transactions WHERE user_id = ? ORDER BY date DESC");
+        $stmt->execute([$user_id]);
+        $transactions = $stmt->fetchAll();
+    } catch (PDOException $e) {
+        $error = "Could not load transaction history: " . $e->getMessage();
+    }
 }
 
 include 'includes/header.php';

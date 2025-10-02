@@ -13,6 +13,23 @@ $db_pass = getenv('DB_PASS') ?: '[YOUR_HOSTINGER_DB_PASSWORD]'; // The password 
 define('SITE_URL', 'https://yourdomain.com/'); // Optional; redirects are domain-agnostic below
 define('SECRET_KEY', 'Your_Strong_Random_Secret_Key_For_Sessions_And_Hashing'); 
 
+// --- DEBUG / ERROR HANDLING ---
+$__debug_enabled = (getenv('APP_DEBUG') === '1' || getenv('DEBUG') === '1' || file_exists(__DIR__ . '/.debug'));
+if (!defined('APP_DEBUG')) {
+    define('APP_DEBUG', $__debug_enabled);
+}
+if (APP_DEBUG) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+    ini_set('log_errors', '1');
+} else {
+    error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
+    ini_set('display_errors', '0');
+    ini_set('log_errors', '1');
+}
+unset($__debug_enabled);
+date_default_timezone_set(getenv('APP_TZ') ?: 'UTC');
+
 // --- DATABASE CONNECTION (PDO) ---
 // If placeholders are not replaced or env vars are missing, skip DB connection gracefully
 $pdo = null;
